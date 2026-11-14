@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura — Financial Clarity Feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-black: #030305;
+      --bg-panel: rgba(18, 18, 24, 0.68);
+      --bg-card: rgba(24, 24, 32, 0.58);
+      --bg-card-hover: rgba(32, 32, 44, 0.72);
+      --bg-elevated: rgba(38, 38, 52, 0.65);
+      --border-hairline: rgba(255, 255, 255, 0.08);
+      --border-specular: rgba(255, 255, 255, 0.18);
+      --text-main: #f5f5f7;
+      --text-sub: #9898a6;
+      --text-dim: #5e5e6e;
+      --neon-cyan: #00f0ff;
+      --neon-mint: #2ee59d;
+      --neon-blue: #0a84ff;
+      --neon-indigo: #5e5ce6;
+      --neon-rose: #ff375f;
+      --radius-2xl: 26px;
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Neon Apple Lighting */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .glow-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.28;
+    }
+
+    .glow-1 {
+      width: 560px;
+      height: 560px;
+      top: -180px;
+      left: 22%;
+      background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
+    }
+
+    .glow-2 {
+      width: 500px;
+      height: 500px;
+      bottom: -120px;
+      right: 10%;
+      background: radial-gradient(circle, var(--neon-indigo), transparent 70%);
+    }
+
+    .glow-3 {
+      width: 400px;
+      height: 400px;
+      top: 40%;
+      left: -120px;
+      background: radial-gradient(circle, var(--neon-mint), transparent 70%);
+    }
+
+    /* 3-Column Social App Shell */
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1320px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 640px) 360px;
+      gap: 24px;
+      padding: 20px 24px 80px;
+      justify-content: center;
+      align-items: start;
+    }
+
+    /* Glass Shared Style */
+    .glass {
+      background: var(--bg-panel);
+      backdrop-filter: blur(30px) saturate(190%);
+      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      border: 1px solid var(--border-hairline);
+      border-top-color: var(--border-specular);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    /* LEFT SIDEBAR: App Navigation Dock */
+    .left-dock {
+      position: sticky;
+      top: 20px;
+      border-radius: var(--radius-2xl);
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo-orb {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.45);
+    }
+
+    .logo-text {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .logo-sub {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--neon-cyan);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .dock-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dock-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-apple);
+      text-align: left;
+      width: 100%;
+    }
+
+    .dock-item:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .dock-item.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--border-specular);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .dock-item.active svg {
+      color: var(--neon-cyan);
+    }
+
+    .dock-badge {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.28);
+    }
+
+    /* Visitor Clarity Checklist inside Left Dock */
+    .visitor-quest {
+      padding: 16px;
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .quest-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .quest-step {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 12.5px;
+      color: var(--text-sub);
+      transition: color 0.2s ease;
+    }
+
+    .quest-step.done {
+      color: var(--text-main);
+    }
+
+    .quest-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .quest-step.done .quest-check {
+      background: var(--neon-mint);
+      border-color: var(--neon-mint);
+      box-shadow: 0 0 10px rgba(46, 229, 157, 0.5);
+    }
+
+    /* CENTER COLUMN: Social Feed */
+    .feed-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Top Sticky Feed Header + Filter Tabs */
+    .feed-topbar {
+      position: sticky;
+      top: 20px;
+      z-index: 30;
+      border-radius: var(--radius-2xl);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feed-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .feed-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .feed-tab.active {
+      background: var(--text-main);
+      color: #000;
+    }
+
+    .visitor-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      color: var(--neon-mint);
+      background: rgba(46, 229, 157, 0.1);
+      border: 1px solid rgba(46, 229, 157, 0.25);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-weight: 500;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--neon-mint);
+      box-shadow: 0 0 8px var(--neon-mint);
+    }
+
+    /* STORIES TRAY (Instagram/Threads Style) */
+    .stories-tray {
+      border-radius: var(--radius-2xl);
+      padding: 18px 20px;
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .stories-tray::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 82px;
+      background: none;
+      border: none;
+      color: var(--text-main);
+    }
+
+    .story-ring {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      padding: 2.5px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-rose));
+      transition: transform 0.25s var(--ease-apple), box-shadow 0.25s ease;
+    }
+
+    .story-item:hover .story-ring {
+      transform: scale(1.06);
+      box-shadow: 0 0 22px rgba(0, 240, 255, 0.45);
+    }
+
+    .story-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #101018;
+      border: 2px solid #050508;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .story-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .story-label {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* SOCIAL POST CARD */
+    .post-card {
+      border-radius: var(--radius-2xl);
+      padding: 22px;
+      transition: border-color 0.25s ease, transform 0.25s var(--ease-apple);
+    }
+
+    .post-card:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .author-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #000;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 1.5px solid var(--border-specular);
+    }
+
+    .author-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .author-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .verified-badge {
+      color: var(--neon-cyan);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .author-handle {
+      font-size: 12.5px;
+      color: var(--text-sub);
+    }
+
+    .challenge-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 11px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    .post-copy {
+      font-size: 15px;
+      line-height: 1.58;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .post-copy span.highlight {
+      color: var(--neon-cyan);
+      font-weight: 500;
+    }
+
+    /* Post Hero Visual Banner (Real Generated Image) */
+    .post-media-banner {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-specular);
+      height: 230px;
+      background: #08080c;
+    }
+
+    .post-media-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s var(--ease-apple);
+    }
+
+    .post-card:hover .post-media-banner img {
+      transform: scale(1.03);
+    }
+
+    .media-overlay-badges {
+      position: absolute;
+      inset: auto 14px 14px 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .media-glass-pill {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(8, 8, 14, 0.76);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-specular);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Embedded Interactive Widget inside Post */
+    .post-embed {
+      background: rgba(8, 8, 12, 0.72);
+      border: 1px solid var(--border-hairline);
+      border-top-color: var(--border-specular);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    /* Jargon Swipe/Toggle inside Post 1 */
+    .embed-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+    }
+
+    .embed-tab {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .embed-tab.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .compare-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .compare-pane {
+      padding: 14px;
+      border-radius: var(--radius-lg);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .compare-pane.bank {
+      background: rgba(255, 55, 95, 0.06);
+      border: 1px solid rgba(255, 55, 95, 0.2);
+      color: var(--text-sub);
+    }
+
+    .compare-pane.aura {
+      background: rgba(46, 229, 157, 0.08);
+      border: 1px solid rgba(46, 229, 157, 0.28);
+      color: var(--text-main);
+    }
+
+    .pane-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .compare-pane.bank .pane-label { color: var(--neon-rose); }
+    .compare-pane.aura .pane-label { color: var(--neon-mint); }
+
+    /* Post 2: Interactive Persona + Paycheck Simulator Widget */
+    .persona-chip-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .persona-pill-btn {
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-sub);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .persona-pill-btn img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--border-specular);
+      flex-shrink: 0;
+    }
+
+    .persona-pill-btn.active {
+      background: rgba(0, 240, 255, 0.1);
+      border-color: rgba(0, 240, 255, 0.45);
+      color: var(--text-main);
+    }
+
+    .persona-pill-btn strong {
+      display: block;
+      font-size: 12.5px;
+      margin-bottom: 1px;
+    }
+
+    .persona-pill-btn span {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: block;
+    }
+
+    .persona-pill-btn.active span {
+      color: var(--neon-cyan);
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .big-rm {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    input[type="range"].neon-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      outline: none;
+      margin-bottom: 18px;
+    }
+
+    input[type="range"].neon-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--neon-cyan);
+      box-shadow: 0 0 16px var(--neon-cyan);
+      cursor: grab;
+    }
+
+    .mini-buckets-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .mini-bucket {
+      padding: 11px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .mb-label {
+      font-size: 11px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+
+    .mb-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .mb-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .mb-sub {
+      font-size: 10.5px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* Post 3: Interactive Next-Step Launchpad Poll */
+    .poll-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .poll-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-apple);
+      text-align: left;
+    }
+
+    .poll-btn:hover, .poll-btn.selected {
+      background: rgba(0, 240, 255, 0.1);
+      border-color: rgba(0, 240, 255, 0.45);
+      transform: translateX(4px);
+    }
+
+    .poll-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .poll-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--neon-cyan);
+      font-weight: 600;
+    }
+
+    .poll-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+    }
+
+    .poll-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .thread-reply-box {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.09), rgba(94, 92, 230, 0.08));
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    /* Social Post Action Bar (Like, Reply, Repost, Bookmark) */
+    .post-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.15s ease;
+    }
+
+    .social-btn:hover {
+      color: var(--text-main);
+    }
+
+    .social-btn.liked {
+      color: var(--neon-rose);
+    }
+
+    .social-btn.liked svg {
+      fill: var(--neon-rose);
+    }
+
+    .social-btn.bookmarked {
+      color: var(--neon-cyan);
+    }
+
+    /* RIGHT SIDEBAR: Apple Wallet Card + Live AI Copilot Chat */
+    .right-sidebar {
+      position: sticky;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Apple Titanium Card with Real Generated Background */
+    .titanium-wallet-card {
+      border-radius: var(--radius-2xl);
+      padding: 22px;
+      background:
+        linear-gradient(160deg, rgba(10, 12, 18, 0.55) 0%, rgba(8, 8, 14, 0.92) 100%),
+        url('assets/post_titanium_card.jpg') center/cover no-repeat;
+      border: 1px solid var(--border-specular);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wallet-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .wallet-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(12px);
+      padding: 4px 10px 4px 4px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-specular);
+    }
+
+    .wallet-user-chip img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .wallet-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--neon-cyan);
+      letter-spacing: 0.04em;
+    }
+
+    .wallet-balance-label {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .wallet-balance {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .wallet-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .wm-label {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .wm-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neon-mint);
+    }
+
+    /* Live AI Copilot Direct Message Widget */
+    .copilot-dm-card {
+      border-radius: var(--radius-2xl);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dm-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .dm-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .dm-bubble {
+      padding: 11px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .dm-bubble.ai {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+    }
+
+    .dm-bubble.user {
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-indigo));
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      max-width: 88%;
+    }
+
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .qp-btn {
+      font-size: 11.5px;
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .qp-btn:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .dm-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dm-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-pill);
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .dm-input:focus {
+      border-color: var(--neon-cyan);
+    }
+
+    .dm-send {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--text-main);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* STORY VIEWER MODAL (Instagram/Threads Full-Screen Glass Overlay) */
+    .story-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.84);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .story-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .story-phone-frame {
+      width: 100%;
+      max-width: 420px;
+      min-height: 600px;
+      border-radius: 34px;
+      background: linear-gradient(165deg, #161622 0%, #07070c 100%);
+      border: 1px solid var(--border-specular);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 240, 255, 0.18);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .story-bg-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.34;
+      filter: saturate(120%);
+      z-index: 0;
+    }
+
+    .story-gradient-mask {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5, 5, 10, 0.65) 0%, rgba(5, 5, 10, 0.45) 40%, rgba(5, 5, 10, 0.95) 85%);
+      z-index: 1;
+    }
+
+    .story-layer {
+      position: relative;
+      z-index: 2;
+    }
+
+    .story-progress-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .story-progress-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--neon-cyan);
+    }
+
+    @media (max-width: 1120px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        max-width: 640px;
+      }
+      .left-dock, .right-sidebar {
+        position: static;
+      }
+      .mini-buckets-grid, .compare-cards, .persona-chip-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-bg">
+    <div class="glow-blob glow-1"></div>
+    <div class="glow-blob glow-2"></div>
+    <div class="glow-blob glow-3"></div>
+  </div>
+
+  <div class="app-shell">
+    <!-- LEFT DOCK: Social App Navigation + 3-Step Visitor Quest -->
+    <aside class="left-dock glass">
+      <a href="#" class="app-logo">
+        <div class="logo-orb">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <span class="logo-text">aura.social</span>
+          <span class="logo-sub">Financial Clarity Feed</span>
+        </div>
+      </a>
+
+      <nav class="dock-nav">
+        <button class="dock-item active" onclick="filterFeed('all', this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+          <span>Welcome Feed</span>
+          <span class="dock-badge">3</span>
+        </button>
+
+        <button class="dock-item" onclick="scrollToPost('post-what')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>01. What It Does</span>
+        </button>
+
+        <button class="dock-item" onclick="scrollToPost('post-who')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>02. Who It Helps</span>
+        </button>
+
+        <button class="dock-item" onclick="scrollToPost('post-next')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          <span>03. What To Do Next</span>
+        </button>
+      </nav>
+
+      <!-- New Visitor Progress Tracker -->
+      <div class="visitor-quest">
+        <div class="quest-title">
+          <span>First-Time Visitor Guide</span>
+          <span id="questCounter" style="color: var(--neon-mint);">1 / 3</span>
+        </div>
+        <div class="quest-list">
+          <div class="quest-step done" id="quest1">
+            <span class="quest-check">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span>See what Aura does</span>
+          </div>
+          <div class="quest-step" id="quest2">
+            <span class="quest-check">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span>Slide your monthly income</span>
+          </div>
+          <div class="quest-step" id="quest3">
+            <span class="quest-check">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <span>Pick your next step in feed</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER FEED: Stories + Interactive Social Posts -->
+    <main class="feed-column">
+      <!-- Sticky Top Bar -->
+      <header class="feed-topbar glass">
+        <div class="feed-tabs">
+          <button class="feed-tab active" onclick="filterFeed('all', this)">For You · New Visitor</button>
+          <button class="feed-tab" onclick="filterFeed('simulator', this)">Paycheck Simulator</button>
+          <button class="feed-tab" onclick="filterFeed('next', this)">Next Steps</button>
+        </div>
+        <div class="visitor-status-pill">
+          <span class="pulse-dot"></span>
+          <span>Interactive Preview · No Login</span>
+        </div>
+      </header>
+
+      <!-- Stories Row with REAL Generated Portrait Photos -->
+      <section class="stories-tray glass" aria-label="Product Stories">
+        <button class="story-item" onclick="openStory(0)">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="assets/post_titanium_card.jpg" alt="Aura 60s Intro" />
+            </div>
+          </div>
+          <span class="story-label">60s Intro</span>
+        </button>
+
+        <button class="story-item" onclick="openStory(1)">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="assets/avatar_amir.jpg" alt="Amir Student" />
+            </div>
+          </div>
+          <span class="story-label">Amir · 21</span>
+        </button>
+
+        <button class="story-item" onclick="openStory(2)">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="assets/avatar_siti.jpg" alt="Siti Fresh Grad" />
+            </div>
+          </div>
+          <span class="story-label">Siti · 24</span>
+        </button>
+
+        <button class="story-item" onclick="openStory(3)">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="assets/avatar_haziq.jpg" alt="Haziq Freelancer" />
+            </div>
+          </div>
+          <span class="story-label">Haziq · 26</span>
+        </button>
+
+        <button class="story-item" onclick="openStory(4)">
+          <div class="story-ring">
+            <div class="story-avatar" style="background: linear-gradient(135deg, #00f0ff22, #2ee59d33); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--neon-mint);">
+              RM 10
+            </div>
+          </div>
+          <span class="story-label">1st Invest</span>
+        </button>
+      </section>
+
+      <!-- POST 01: WHAT THE PRODUCT DOES -->
+      <article class="post-card glass" id="post-what" data-category="all">
+        <div class="post-header">
+          <div class="author-cluster">
+            <div class="author-avatar">
+              <img src="assets/post_titanium_card.jpg" alt="Aura Official" />
+            </div>
+            <div class="author-meta">
+              <div class="author-name-row">
+                <span>Aura Financial Intelligence</span>
+                <span class="verified-badge" title="Verified Official Account">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
+                  </svg>
+                </span>
+              </div>
+              <span class="author-handle">@aura.official · Pinned Welcome Post</span>
+            </div>
+          </div>
+          <span class="challenge-tag">01 / What It Does</span>
+        </div>
+
+        <p class="post-copy">
+          First time here? Most financial websites make you leave in 10 seconds because they speak in Wall Street riddles. <br /><br />
+          <span class="highlight">Aura is an AI money copilot</span> that does three simple things the day your money arrives: locks your bills, builds a RM 1,000 emergency cushion, and gives you one guilt-free <span class="highlight">Daily Safe-to-Spend</span> number.
+        </p>
+
+        <!-- Real Apple Titanium Card Product Visual inside Post 1 -->
+        <div class="post-media-banner">
+          <img src="assets/post_titanium_card.jpg" alt="Aura Smart Titanium Card" />
+          <div class="media-overlay-badges">
+            <span class="media-glass-pill">
+              <span class="pulse-dot"></span>
+              01 · Auto Paycheck Split
+            </span>
+            <span class="media-glass-pill">
+              02 · Liquid Safety Vault (3.6% p.a.)
+            </span>
+            <span class="media-glass-pill">
+              03 · RM 10 Global ETF Start
+            </span>
+          </div>
+        </div>
+
+        <!-- Interactive Jargon Translator Embed inside Post 1 -->
+        <div class="post-embed">
+          <div class="embed-tabs">
+            <button class="embed-tab active" onclick="switchJargonEmbed(0, this)">Emergency Fund</button>
+            <button class="embed-tab" onclick="switchJargonEmbed(1, this)">Paycheck Split</button>
+            <button class="embed-tab" onclick="switchJargonEmbed(2, this)">Micro-Investing</button>
+          </div>
+          <div class="compare-cards">
+            <div class="compare-pane bank">
+              <span class="pane-label">Confusing Bank Website</span>
+              <p id="embedBankCopy">"Maintain 3–6 months of liquid cash-equivalent reserves in a money-market instrument to mitigate short-term solvency risk."</p>
+            </div>
+            <div class="compare-pane aura">
+              <span class="pane-label">Aura in Plain English</span>
+              <p id="embedAuraCopy">"Auto-save RM 45 every Monday into an instant-withdrawal vault until you hit RM 1,000—so a flat tire never puts you in debt."</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-actions">
+          <div class="action-group">
+            <button class="social-btn" onclick="toggleLike(this, 428)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span>428</span>
+            </button>
+            <button class="social-btn" onclick="askSidebar('How does Aura connect to my bank safely?')">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+              <span>Ask AI Copilot</span>
+            </button>
+          </div>
+          <button class="social-btn" onclick="toggleBookmark(this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Save</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- POST 02: WHO IT HELPS (Interactive Persona + Live Slider Post with Real Photos) -->
+      <article class="post-card glass" id="post-who" data-category="simulator">
+        <div class="post-header">
+          <div class="author-cluster">
+            <div class="author-avatar">
+              <img src="assets/avatar_amir.jpg" alt="Persona Avatar" id="post2AuthorAvatar" />
+            </div>
+            <div class="author-meta">
+              <div class="author-name-row">
+                <span id="post2AuthorName">Amir Hakim · CS Year 3</span>
+                <span class="verified-badge">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
+                  </svg>
+                </span>
+              </div>
+              <span class="author-handle" id="post2AuthorHandle">@amir.uni · Shared his live Aura split</span>
+            </div>
+          </div>
+          <span class="challenge-tag">02 / Who It Helps</span>
+        </div>
+
+        <p class="post-copy" id="personaPostText">
+          "As a final-year student, I used to run out of allowance by week 3. Tap your life stage below and drag the slider to see how Aura splits your monthly cash flow:"
+        </p>
+
+        <!-- Embedded Live Interactive Paycheck Simulator with Real Portraits -->
+        <div class="post-embed">
+          <div class="persona-chip-row">
+            <button class="persona-pill-btn active" onclick="setFeedPersona(0, this)">
+              <img src="assets/avatar_amir.jpg" alt="Amir Student" />
+              <div>
+                <strong>Student</strong>
+                <span>Amir · RM 1.5k</span>
+              </div>
+            </button>
+            <button class="persona-pill-btn" onclick="setFeedPersona(1, this)">
+              <img src="assets/avatar_siti.jpg" alt="Siti Fresh Grad" />
+              <div>
+                <strong>1st Paycheck</strong>
+                <span>Siti · RM 3.8k</span>
+              </div>
+            </button>
+            <button class="persona-pill-btn" onclick="setFeedPersona(2, this)">
+              <img src="assets/avatar_haziq.jpg" alt="Haziq Freelancer" />
+              <div>
+                <strong>Freelancer</strong>
+                <span>Haziq · RM 5.5k</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="slider-header">
+            <span style="font-size: 12.5px; color: var(--text-sub);" id="personaFitCaption">
+              Ideal for students managing RM 500 – RM 2,000/mo
+            </span>
+            <span class="big-rm" id="feedIncomeVal">RM 1,500</span>
+          </div>
+
+          <input
+            type="range"
+            class="neon-slider"
+            id="feedSlider"
+            min="500"
+            max="10000"
+            step="100"
+            value="1500"
+            oninput="updateFeedSim(this.value)"
+          />
+
+          <div class="mini-buckets-grid">
+            <div class="mini-bucket">
+              <div class="mb-label">
+                <span class="mb-dot" style="background: var(--neon-blue);"></span>
+                <span>Bills & Needs</span>
+              </div>
+              <div class="mb-val" id="mbNeeds">RM 825</div>
+              <div class="mb-sub" id="mbNeedsPct">55% locked</div>
+            </div>
+
+            <div class="mini-bucket">
+              <div class="mb-label">
+                <span class="mb-dot" style="background: var(--neon-indigo);"></span>
+                <span>Daily Spend</span>
+              </div>
+              <div class="mb-val" id="mbWants">RM 375</div>
+              <div class="mb-sub" id="mbDaily">RM 13 / day</div>
+            </div>
+
+            <div class="mini-bucket">
+              <div class="mb-label">
+                <span class="mb-dot" style="background: var(--neon-cyan);"></span>
+                <span>Safety Vault</span>
+              </div>
+              <div class="mb-val" id="mbSafety">RM 225</div>
+              <div class="mb-sub">3.6% p.a. liquid</div>
+            </div>
+
+            <div class="mini-bucket">
+              <div class="mb-label">
+                <span class="mb-dot" style="background: var(--neon-mint);"></span>
+                <span>1st Invest</span>
+              </div>
+              <div class="mb-val" id="mbInvest">RM 75</div>
+              <div class="mb-sub">Global ETF</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-actions">
+          <div class="action-group">
+            <button class="social-btn" onclick="toggleLike(this, 892)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span>892</span>
+            </button>
+            <button class="social-btn" onclick="askSidebar('Is my simulated split realistic for Kuala Lumpur living costs?')">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+              <span>Check KL Cost Fit</span>
+            </button>
+          </div>
+          <button class="social-btn" onclick="toggleBookmark(this)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Save Split</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- POST 03: WHAT THE VISITOR CAN DO NEXT (Interactive Action Launchpad) -->
+      <article class="post-card glass" id="post-next" data-category="next">
+        <div class="post-header">
+          <div class="author-cluster">
+            <div class="author-avatar">
+              <img src="assets/avatar_siti.jpg" alt="Siti Host" />
+            </div>
+            <div class="author-meta">
+              <div class="author-name-row">
+                <span>Aura Action Copilot</span>
+                <span class="verified-badge">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
+                  </svg>
+                </span>
+              </div>
+              <span class="author-handle">@aura.copilot · Interactive Next Step</span>
+            </div>
+          </div>
+          <span class="challenge-tag">03 / What To Do Next</span>
+        </div>
+
+        <p class="post-copy">
+          Ready to try one small move without creating an account or linking a bank card? <span class="highlight">Tap any goal below</span> to generate your instant 7-Day Starter Thread:
+        </p>
+
+        <div class="post-embed">
+          <div class="poll-options">
+            <button class="poll-btn selected" onclick="selectNextStep(0, this)">
+              <div class="poll-left">
+                <span class="poll-num">01</span>
+                <div>
+                  <span class="poll-title">Build My First RM 1,000 Safety Net</span>
+                  <span class="poll-desc" id="nextStepDesc1">Auto-transfer RM 56/week · Reach RM 1,000 in 4.4 months</span>
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+              </svg>
+            </button>
+
+            <button class="poll-btn" onclick="selectNextStep(1, this)">
+              <div class="poll-left">
+                <span class="poll-num">02</span>
+                <div>
+                  <span class="poll-title">Lock My Daily Safe-to-Spend Number</span>
+                  <span class="poll-desc" id="nextStepDesc2">Spend RM 13/day guilt-free after bills are separated</span>
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+              </svg>
+            </button>
+
+            <button class="poll-btn" onclick="selectNextStep(2, this)">
+              <div class="poll-left">
+                <span class="poll-num">03</span>
+                <div>
+                  <span class="poll-title">Test-Drive a RM 10 Global Index Portfolio</span>
+                  <span class="poll-desc" id="nextStepDesc3">See how RM 75/mo compounds over 1, 3, and 5 years</span>
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Instant AI Thread Reply inside the post -->
+          <div class="thread-reply-box" id="threadReplyBox">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--neon-cyan); text-transform: uppercase;">
+                Instant 7-Day Action Plan
+              </span>
+              <button
+                onclick="copyCurrentPlan()"
+                style="background: rgba(255,255,255,0.1); border: 1px solid var(--border-specular); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 99px; cursor: pointer;"
+                id="copyBtnLabel"
+              >
+                Copy Plan to Notes
+              </button>
+            </div>
+            <p style="font-size: 13.5px; line-height: 1.55; color: var(--text-main);" id="threadReplyText">
+              Day 1: Open a separate zero-fee savings pot named "Safety 1K". Day 2: Schedule an automatic RM 56 transfer every Monday morning. Day 7: Your first buffer week is locked—without touching your RM 13/day food & social budget.
+            </p>
+          </div>
+        </div>
+
+        <div class="post-actions">
+          <div class="action-group">
+            <button class="social-btn" onclick="toggleLike(this, 614)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <span>614</span>
+            </button>
+          </div>
+          <span style="font-size: 12px; color: var(--text-sub);">Zero lock-in · Withdraw 24/7</span>
+        </div>
+      </article>
+    </main>
+
+    <!-- RIGHT SIDEBAR: Live Apple Titanium Card + Quick AI DM -->
+    <aside class="right-sidebar">
+      <div class="titanium-wallet-card">
+        <div class="wallet-top">
+          <div class="wallet-user-chip">
+            <img src="assets/avatar_amir.jpg" alt="Active Persona" id="walletAvatarImg" />
+            <span class="wallet-tag" id="walletPersonaTag">STUDENT MODE</span>
+          </div>
+          <span class="wallet-tag">LIVE SIM</span>
+        </div>
+        <div class="wallet-balance-label">Your Guilt-Free Daily Safe Spend</div>
+        <div class="wallet-balance" id="walletDailySpend">RM 13.00 / day</div>
+        <div class="wallet-metrics">
+          <div>
+            <div class="wm-label">12-Mo Safety + ETF</div>
+            <div class="wm-val" id="walletAnnualProj">RM 3,750</div>
+          </div>
+          <div>
+            <div class="wm-label">RM 1k Goal Speed</div>
+            <div class="wm-val" id="walletGoalMonths">4.4 Months</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Direct Message Copilot Widget -->
+      <div class="copilot-dm-card glass">
+        <div class="dm-header">
+          <div class="dm-title">
+            <span class="pulse-dot"></span>
+            <span>Ask Aura Copilot</span>
+          </div>
+          <span style="font-size: 11px; color: var(--text-sub);">Instant Plain-English DM</span>
+        </div>
+
+        <div class="dm-feed" id="dmFeed">
+          <div class="dm-bubble ai">
+            Welcome! Tap any question below or type your own—I explain everything without banking jargon.
+          </div>
+        </div>
+
+        <div class="quick-prompts">
+          <button class="qp-btn" onclick="askSidebar('Is RM 50/mo really enough to start?')">RM 50 enough?</button>
+          <button class="qp-btn" onclick="askSidebar('Is there a Shariah-compliant option?')">Shariah option?</button>
+          <button class="qp-btn" onclick="askSidebar('Can I withdraw my money anytime?')">Withdraw anytime?</button>
+        </div>
+
+        <form class="dm-input-row" onsubmit="handleCustomDm(event)">
+          <input
+            type="text"
+            id="dmInput"
+            class="dm-input"
+            placeholder="Ask anything about your money..."
+          />
+          <button type="submit" class="dm-send" aria-label="Send message">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FULL-SCREEN GLASS STORY MODAL WITH REAL PORTRAITS -->
+  <div class="story-modal-backdrop" id="storyModal" onclick="if(event.target.id==='storyModal') closeStory()">
+    <div class="story-phone-frame">
+      <img src="assets/post_titanium_card.jpg" alt="Story Background" class="story-bg-photo" id="storyBgImg" />
+      <div class="story-gradient-mask"></div>
+
+      <div class="story-layer">
+        <div class="story-progress-bar">
+          <div class="story-progress-fill"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="author-avatar" style="width: 38px; height: 38px;">
+              <img src="assets/post_titanium_card.jpg" alt="Story Avatar" id="storyAvatarImg" />
+            </div>
+            <div>
+              <div style="font-size: 13.5px; font-weight: 600;" id="storyAuthor">Aura 60s Intro</div>
+              <div style="font-size: 11px; color: var(--text-sub);" id="storyRole">Product Walkthrough</div>
+            </div>
+          </div>
+          <button onclick="closeStory()" style="background: rgba(255,255,255,0.12); border: 1px solid var(--border-specular); color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="story-layer" style="margin-top: auto;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--neon-cyan); text-transform: uppercase; margin-bottom: 10px;" id="storyKicker">
+          STORY HIGHLIGHT
+        </div>
+        <h3 style="font-size: 25px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.18; margin-bottom: 14px;" id="storyTitle">
+          Stop guessing what you can afford today.
+        </h3>
+        <p style="font-size: 14px; color: #d4d4dc; line-height: 1.6; margin-bottom: 22px;" id="storyBody">
+          Aura turns a confusing monthly bank balance into three automated buckets: locked bills, a liquid emergency buffer, and a daily safe-to-spend allowance.
+        </p>
+
+        <div style="padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; color: var(--neon-mint); font-weight: 500;" id="storyMetric">Avg setup: 90 seconds</span>
+          <button onclick="closeStory(); scrollToPost('post-who');" style="background: #fff; color: #000; border: none; padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer;">
+            Try With My Income
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const jargonEmbeds = [
+      {
+        bank: '"Maintain 3–6 months of liquid cash-equivalent reserves in a money-market instrument to mitigate short-term solvency risk."',
+        aura: '"Auto-save RM 45 every Monday into an instant-withdrawal vault until you hit RM 1,000—so a flat tire never puts you in debt."'
+      },
+      {
+        bank: '"Implement discretionary cash-flow partitioning across fixed liabilities and variable consumption categories."',
+        aura: '"Separate your rent and bills on payday morning so you know your exact guilt-free daily food & coffee budget."'
+      },
+      {
+        bank: '"Deploy periodic capital via dollar-cost averaging into globally diversified low-expense-ratio equity ETFs."',
+        aura: '"Put RM 50/month automatically into a bundle of 1,500+ top global companies instead of gambling on meme stocks."'
+      }
+    ];
+
+    function switchJargonEmbed(idx, btn) {
+      document.querySelectorAll('.embed-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('embedBankCopy').textContent = jargonEmbeds[idx].bank;
+      document.getElementById('embedAuraCopy').textContent = jargonEmbeds[idx].aura;
+    }
+
+    const feedPersonas = [
+      {
+        label: 'STUDENT MODE',
+        name: 'Amir Hakim · CS Year 3',
+        handle: '@amir.uni · Shared his live Aura split',
+        avatar: 'assets/avatar_amir.jpg',
+        defaultIncome: 1500,
+        caption: 'Ideal for students managing RM 500 – RM 2,000/mo',
+        quote: '"As a final-year student, I used to run out of allowance by week 3. Tap your life stage below and drag the slider to see how Aura splits your monthly cash flow:"',
+        ratios: [55, 25, 15, 5]
+      },
+      {
+        label: 'FIRST PAYCHECK',
+        name: 'Siti Nurhaliza · Fresh Grad',
+        handle: '@siti.builds · Shared her live Aura split',
+        avatar: 'assets/avatar_siti.jpg',
+        defaultIncome: 3800,
+        caption: 'Ideal for fresh grads earning RM 2,500 – RM 6,000/mo',
+        quote: '"My first RM 3,800 salary disappeared into Grab and rent until I automated my payday split. Try your salary on the slider:"',
+        ratios: [50, 20, 20, 10]
+      },
+      {
+        label: 'FREELANCER',
+        name: 'Haziq Rahman · UI Designer',
+        handle: '@haziq.studio · Shared his live Aura split',
+        avatar: 'assets/avatar_haziq.jpg',
+        defaultIncome: 5500,
+        caption: 'Ideal for creators & freelancers with variable payouts',
+        quote: '"Client invoices don\'t arrive on a schedule. Aura locks a percentage of every payout so slow months never panic me:"',
+        ratios: [45, 20, 25, 10]
+      }
+    ];
+
+    let activePersona = 0;
+    let activeIncome = 1500;
+    let activeNextStep = 0;
+    let completedQuests = { 1: true, 2: false, 3: false };
+
+    function markQuest(num) {
+      completedQuests[num] = true;
+      document.getElementById('quest' + num).classList.add('done');
+      const count = Object.values(completedQuests).filter(Boolean).length;
+      document.getElementById('questCounter').textContent = count + ' / 3';
+    }
+
+    function setFeedPersona(idx, btn) {
+      activePersona = idx;
+      document.querySelectorAll('.persona-pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const p = feedPersonas[idx];
+      document.getElementById('walletPersonaTag').textContent = p.label;
+      document.getElementById('walletAvatarImg').src = p.avatar;
+      document.getElementById('post2AuthorAvatar').src = p.avatar;
+      document.getElementById('post2AuthorName').textContent = p.name;
+      document.getElementById('post2AuthorHandle').textContent = p.handle;
+      document.getElementById('personaFitCaption').textContent = p.caption;
+      document.getElementById('personaPostText').textContent = p.quote;
+
+      const slider = document.getElementById('feedSlider');
+      slider.value = p.defaultIncome;
+      updateFeedSim(p.defaultIncome);
+      markQuest(2);
+    }
+
+    function updateFeedSim(val) {
+      activeIncome = Number(val);
+      const p = feedPersonas[activePersona];
+      const [rNeeds, rWants, rSafe, rInv] = p.ratios;
+
+      const needs = Math.round(activeIncome * (rNeeds / 100));
+      const wants = Math.round(activeIncome * (rWants / 100));
+      const safe = Math.round(activeIncome * (rSafe / 100));
+      const inv = Math.round(activeIncome * (rInv / 100));
+      const daily = Math.max(5, Math.round(wants / 30));
+      const weeklySafe = Math.max(10, Math.round(safe / 4));
+      const monthsTo1k = (1000 / Math.max(safe, 1)).toFixed(1);
+      const annual = Math.round((safe + inv) * 12 * 1.042);
+
+      document.getElementById('feedIncomeVal').textContent = 'RM ' + activeIncome.toLocaleString();
+      document.getElementById('mbNeeds').textContent = 'RM ' + needs.toLocaleString();
+      document.getElementById('mbNeedsPct').textContent = rNeeds + '% locked';
+      document.getElementById('mbWants').textContent = 'RM ' + wants.toLocaleString();
+      document.getElementById('mbDaily').textContent = `RM ${daily} / day`;
+      document.getElementById('mbSafety').textContent = 'RM ' + safe.toLocaleString();
+      document.getElementById('mbInvest').textContent = 'RM ' + inv.toLocaleString();
+
+      // Update Right Wallet Card
+      document.getElementById('walletDailySpend').textContent = `RM ${daily}.00 / day`;
+      document.getElementById('walletAnnualProj').textContent = 'RM ' + annual.toLocaleString();
+      document.getElementById('walletGoalMonths').textContent = `${monthsTo1k} Months`;
+
+      // Update Post 3 options
+      document.getElementById('nextStepDesc1').textContent =
+        `Auto-transfer RM ${weeklySafe}/week · Reach RM 1,000 in ${monthsTo1k} months`;
+      document.getElementById('nextStepDesc2').textContent =
+        `Spend RM ${daily}/day guilt-free after RM ${needs.toLocaleString()} bills are separated`;
+      document.getElementById('nextStepDesc3').textContent =
+        `See how RM ${inv}/mo compounds into ~RM ${Math.round(inv * 60 * 1.24).toLocaleString()} in 5 years`;
+
+      renderThreadReply(activeNextStep);
+      if (val != 1500) markQuest(2);
+    }
+
+    function selectNextStep(idx, btn) {
+      activeNextStep = idx;
+      document.querySelectorAll('.poll-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      renderThreadReply(idx);
+      markQuest(3);
+    }
+
+    function renderThreadReply(idx) {
+      const p = feedPersonas[activePersona];
+      const [rNeeds, rWants, rSafe, rInv] = p.ratios;
+      const needs = Math.round(activeIncome * (rNeeds / 100));
+      const wants = Math.round(activeIncome * (rWants / 100));
+      const safe = Math.round(activeIncome * (rSafe / 100));
+      const inv = Math.round(activeIncome * (rInv / 100));
+      const daily = Math.max(5, Math.round(wants / 30));
+      const weeklySafe = Math.max(10, Math.round(safe / 4));
+
+      const replies = [
+        `Day 1: Create a separate pot named "Safety 1K". Day 2: Set an automatic RM ${weeklySafe} transfer every Monday. Because your RM ${daily}/day spending budget stays untouched, you'll hit RM 1,000 in ${(1000 / Math.max(safe, 1)).toFixed(1)} months without feeling broke.`,
+        `Payday Morning Step 1: Leave RM ${needs.toLocaleString()} in your main bill account. Step 2: Move RM ${wants.toLocaleString()} to your daily spending card—giving you exactly RM ${daily}/day for food, coffee, and grab with zero end-of-month anxiety.`,
+        `Start with just RM 10 today (and automate RM ${inv}/month on payday) into a diversified Global Index ETF. In 5 years at historical 7% average annual returns, your habit grows to ~RM ${Math.round(inv * 60 * 1.24).toLocaleString()} with zero stock-picking stress.`
+      ];
+
+      document.getElementById('threadReplyText').textContent = replies[idx];
+      document.getElementById('copyBtnLabel').textContent = 'Copy Plan to Notes';
+    }
+
+    function copyCurrentPlan() {
+      const text = document.getElementById('threadReplyText').textContent;
+      navigator.clipboard.writeText(text);
+      document.getElementById('copyBtnLabel').textContent = 'Copied to Clipboard';
+    }
+
+    function toggleLike(btn, baseCount) {
+      const isLiked = btn.classList.toggle('liked');
+      const span = btn.querySelector('span');
+      span.textContent = isLiked ? baseCount + 1 : baseCount;
+    }
+
+    function toggleBookmark(btn) {
+      const saved = btn.classList.toggle('bookmarked');
+      btn.querySelector('span').textContent = saved ? 'Saved' : 'Save';
+    }
+
+    // Sidebar AI Chat
+    const cannedAnswers = {
+      'How does Aura connect to my bank safely?':
+        'You don\'t even have to link a bank login! You can start in Manual Checklist Mode, or use read-only regulated open banking where Aura can never move money without your biometric approval.',
+      'Is my simulated split realistic for Kuala Lumpur living costs?':
+        'Yes—our default student and fresh-grad splits are calibrated for Klang Valley rent, LRT/MRT pass, and daily makan costs, and you can customize the percentages anytime.',
+      'Is RM 50/mo really enough to start?':
+        '100%. Starting with RM 10–RM 50 builds the automatic payday habit first. Once your income grows, increasing the slider takes two seconds.',
+      'Is there a Shariah-compliant option?':
+        'Yes. Both the Safety Vault (Islamic money market) and Global Equity ETFs have 1-click Shariah-screened modes.',
+      'Can I withdraw my money anytime?':
+        'Always. There are zero lock-in periods or withdrawal penalties—your Safety Vault transfers back to your bank account 24/7.'
+    };
+
+    function askSidebar(question) {
+      const feed = document.getElementById('dmFeed');
+      const userBubble = document.createElement('div');
+      userBubble.className = 'dm-bubble user';
+      userBubble.textContent = question;
+      feed.appendChild(userBubble);
+
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'dm-bubble ai';
+      aiBubble.textContent =
+        cannedAnswers[question] ||
+        `Based on your RM ${activeIncome.toLocaleString()}/mo plan, Aura keeps your bills safe first, locks RM ${Math.round(activeIncome * 0.15)}/mo into your liquid Safety Vault, and gives you a clear daily spending number.`;
+      feed.appendChild(aiBubble);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function handleCustomDm(e) {
+      e.preventDefault();
+      const input = document.getElementById('dmInput');
+      const val = input.value.trim();
+      if (!val) return;
+      input.value = '';
+      askSidebar(val);
+    }
+
+    function filterFeed(category, btn) {
+      document.querySelectorAll('.feed-tab').forEach(b => b.classList.remove('active'));
+      if (btn && btn.classList.contains('feed-tab')) btn.classList.add('active');
+      document.querySelectorAll('.post-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function scrollToPost(id) {
+      filterFeed('all');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Stories Data with Real Images
+    const stories = [
+      {
+        img: 'assets/post_titanium_card.jpg',
+        author: 'Aura 60s Intro',
+        role: '01 / What The Product Does',
+        kicker: 'THE PROBLEM WE SOLVE',
+        title: 'Why 82% of first-time visitors leave finance websites.',
+        body: 'Banks throw 40 charts and terms like "yield curve" at you without telling you if you can afford dinner tonight. Aura turns your monthly inflow into one clear Daily Safe-to-Spend number.',
+        metric: 'Zero jargon · 90-second setup'
+      },
+      {
+        img: 'assets/avatar_amir.jpg',
+        author: 'Amir · 21',
+        role: '02 / University Student (RM 1,500/mo)',
+        kicker: 'STUDENT STORY',
+        title: '"I stopped going broke in week 3 of the semester."',
+        body: 'Aura splits my RM 1,500 allowance automatically: RM 825 for hostel & transport, RM 13/day for campus food, and RM 56/week into my emergency buffer.',
+        metric: 'Saved RM 1,000 in 4.4 months'
+      },
+      {
+        img: 'assets/avatar_siti.jpg',
+        author: 'Siti · 24',
+        role: '02 / First Full-Time Job (RM 3,800/mo)',
+        kicker: 'FRESH GRAD STORY',
+        title: '"My first salary finally stopped vanishing."',
+        body: 'On payday morning, Aura locks my rent & PTPTN, sets aside RM 760 into my high-yield Safety Vault, and puts RM 380 into a global index fund.',
+        metric: 'RM 25/day guilt-free lifestyle budget'
+      },
+      {
+        img: 'assets/avatar_haziq.jpg',
+        author: 'Haziq · 26',
+        role: '02 / Freelance Designer (Variable Income)',
+        kicker: 'FREELANCER STORY',
+        title: '"Feast-or-famine months don\'t stress me out anymore."',
+        body: 'Every time a client pays an invoice, Aura automatically routes 25% into my dry-month buffer so my baseline bills are always covered.',
+        metric: '3-month runway automated'
+      },
+      {
+        img: 'assets/post_titanium_card.jpg',
+        author: 'First Micro-Investment',
+        role: '03 / What You Can Do Next',
+        kicker: 'ZERO-INTIMIDATION INVESTING',
+        title: 'Start with RM 10. No stock-picking required.',
+        body: 'Once your safety buffer is underway, test-drive a fractional global portfolio in 2 clicks—and withdraw anytime with zero lock-in.',
+        metric: 'Shariah & Conventional options'
+      }
+    ];
+
+    function openStory(idx) {
+      const s = stories[idx];
+      document.getElementById('storyBgImg').src = s.img;
+      document.getElementById('storyAvatarImg').src = s.img;
+      document.getElementById('storyAuthor').textContent = s.author;
+      document.getElementById('storyRole').textContent = s.role;
+      document.getElementById('storyKicker').textContent = s.kicker;
+      document.getElementById('storyTitle').textContent = s.title;
+      document.getElementById('storyBody').textContent = s.body;
+      document.getElementById('storyMetric').textContent = s.metric;
+      document.getElementById('storyModal').classList.add('open');
+    }
+
+    function closeStory() {
+      document.getElementById('storyModal').classList.remove('open');
+    }
+  </script>
+</body>
+</html>
